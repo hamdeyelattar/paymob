@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:paymob/constant.dart';
+import 'package:paymob/paymob_service/payment_apis.dart';
 
 class PaymobService {
   Future<String> getPaymentKey(int amount, String currency) async {
@@ -27,8 +28,7 @@ class PaymobService {
   // this function will return the authentication token to use it in the next function
   //in this function take paymentKey and reterun token
   Future<String> _authenticationToken() async {
-    final Response response =
-        await Dio().post("https://api.paymob.com/auth/tokens", data: {
+    final Response response = await Dio().post(PaymentApis.authTokenUrl, data: {
       "api_key": PaymentConstants.apikey,
     });
     return response.data["token"];
@@ -39,8 +39,7 @@ class PaymobService {
       {required String authenticationToken,
       required String amount,
       required String currency}) async {
-    final Response response = await Dio()
-        .post('https://accept.paymob.com/api/ecommerce/orders', data: {
+    final Response response = await Dio().post(PaymentApis.orderIdUrl, data: {
       'auth_token': authenticationToken,
       "amount_cents": amount,
       'currency': currency,
@@ -57,8 +56,8 @@ class PaymobService {
     required String amount,
     required String currency,
   }) async {
-    final Response response = await Dio()
-        .post("https://accept.paymob.com/api/acceptance/payment_keys", data: {
+    final Response response =
+        await Dio().post(PaymentApis.paymentKeyUrl, data: {
       //ALL OF THEM ARE REQIERD
       "expiration": 3600, // number of seconds with valid to use
 
